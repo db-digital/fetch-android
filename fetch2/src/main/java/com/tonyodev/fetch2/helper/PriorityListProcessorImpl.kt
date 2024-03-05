@@ -4,6 +4,9 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
+import android.os.Build
+import android.util.Log
+import androidx.core.content.ContextCompat
 import com.tonyodev.fetch2.*
 import com.tonyodev.fetch2.downloader.DownloadManager
 import com.tonyodev.fetch2core.HandlerWrapper
@@ -54,6 +57,7 @@ class PriorityListProcessorImpl constructor(private val handlerWrapper: HandlerW
     }
     private val priorityBackoffResetReceiver: BroadcastReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context?, intent: Intent?) {
+            Log.e("FetchX","priorityBackoffResetReceiver onReceive with exported")
             if (context != null && intent != null) {
                 when (intent.action) {
                     ACTION_QUEUE_BACKOFF_RESET -> {
@@ -68,7 +72,13 @@ class PriorityListProcessorImpl constructor(private val handlerWrapper: HandlerW
 
     init {
         networkInfoProvider.registerNetworkChangeListener(networkChangeListener)
-        context.registerReceiver(priorityBackoffResetReceiver, IntentFilter(ACTION_QUEUE_BACKOFF_RESET))
+        ContextCompat.registerReceiver(
+            context,
+            priorityBackoffResetReceiver,
+            IntentFilter(ACTION_QUEUE_BACKOFF_RESET),
+            ContextCompat.RECEIVER_EXPORTED
+        )
+
     }
 
     private val priorityIteratorRunnable = Runnable {

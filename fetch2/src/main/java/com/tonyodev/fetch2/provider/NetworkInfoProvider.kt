@@ -9,6 +9,7 @@ import android.net.Network
 import android.net.NetworkCapabilities
 import android.net.NetworkRequest
 import android.os.Build
+import androidx.core.content.ContextCompat
 import com.tonyodev.fetch2.NetworkType
 import com.tonyodev.fetch2core.isNetworkAvailable
 import com.tonyodev.fetch2core.isOnMeteredConnection
@@ -53,7 +54,12 @@ class NetworkInfoProvider constructor(private val context: Context,
             connectivityManager.registerNetworkCallback(networkRequest, networkCallback)
         } else {
             try {
-                context.registerReceiver(networkChangeBroadcastReceiver, IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION))
+                ContextCompat.registerReceiver(
+                    context,
+                    networkChangeBroadcastReceiver,
+                    IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION),
+                    ContextCompat.RECEIVER_NOT_EXPORTED
+                )
                 broadcastRegistered = true
             } catch (e: Exception) {
 
